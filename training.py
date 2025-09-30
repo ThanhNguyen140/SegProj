@@ -14,7 +14,12 @@ if __name__ == '__main__':
     output_dir = sys.argv[2]
     batch_size = sys.argv[3]
     lr = sys.argv[4]
-
+    logging.basicConfig(
+        filename= os.path.join(output_dir,'train.log'),
+        filemode="a",                  
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        level=logging.INFO
+    )
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     logging.info(f'The model is running with batch size of {batch_size}')
@@ -37,6 +42,7 @@ if __name__ == '__main__':
     n = 1
     for fold, (train_idx, val_idx) in enumerate(kf.split(imgs)):
         n += 1
+        logging.info(f'Running fold {n}')
         output_folder = f'{output_dir}/fold0{n}'
         os.mkdir(output_folder)
         train_imgs, train_labels = imgs[train_idx], labels[train_idx]
@@ -52,6 +58,7 @@ if __name__ == '__main__':
         recall.append(tr.epoch_val_recall_score[-1])
         dice.append(tr.epoch_val_dice_score[-1])
         iou.append(tr.epoch_val_iou_score[-1])
+        logging.info(f'Finishing fold {n}')
 
     # Results of cross validation
     logging.info(f'Precision: {np.array(precision).mean()}')
