@@ -7,4 +7,6 @@ train_job
 train_job2
 */*.sh
 *.sh
+__pycache__
+*/__pycache__/*
 .ipynb_checkpoints
