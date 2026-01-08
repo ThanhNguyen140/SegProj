@@ -3,3 +3,8 @@ data
 .venv
 notebooks
 yolov8n.pt
+train_job
+train_job2
+*/*.sh
+*.sh
+.ipynb_checkpoints

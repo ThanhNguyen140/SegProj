@@ -11,13 +11,11 @@ def dice_score(y_true: torch.Tensor, y_pred: torch.Tensor):
 
     y_true = y_true.flatten(1)
     y_pred = y_pred.flatten(1)
-
-    eps = 1e-8
     intersection = (y_true * y_pred).sum(dim=-1).float()
     union = y_true.sum(dim=-1) + y_pred.sum(dim=-1).float()
-
+    eps = 1e-8
     dice = (2.0 * intersection + eps) / (union + eps)
-    return dice.mean()
+    return dice.sum()
 
 
 def iou_score(y_true: torch.Tensor, y_pred: torch.Tensor):
@@ -31,39 +29,39 @@ def iou_score(y_true: torch.Tensor, y_pred: torch.Tensor):
     y_true = y_true.flatten(1)
     y_pred = y_pred.flatten(1)
     eps = 1e-8
-
+    
     i_area = (y_true * y_pred).sum(dim=-1).float()
-    u_area = torch.sum(y_true | y_pred, dim=-1).float()
+    u_area = torch.sum(y_true.bool() | y_pred.bool(), dim=-1).float()
 
     iou = (i_area + eps) / (u_area + eps)
+    return iou.sum()
 
-    return iou.mean()
 
-
-def precision_score(y_true: torch.Tensor, y_pred: torch.Tensor, eps=1e-8):
+def precision_score(y_true: torch.Tensor, y_pred: torch.Tensor):
     """
     Precision = TP / (TP + FP)
-    y_true, y_pred: binary tensors [B, 1, D, H, W] or [B, D, H, W]
+    y_true, y_pred: binary tensors [B, D, H, W]
     """
     y_true = y_true.flatten(1)
     y_pred = y_pred.flatten(1)
-
+    eps = 1e-8
     tp = (y_true * y_pred).sum(dim=-1)
     fp = torch.sum((1 - y_true) * y_pred, dim=-1)
 
     precision = (tp + eps) / (tp + fp + eps)
-    return precision.mean()
+    return precision.sum()
 
 
-def recall_score(y_true: torch.Tensor, y_pred: torch.Tensor, eps=1e-8):
+def recall_score(y_true: torch.Tensor, y_pred: torch.Tensor):
     """
     Recall = TP / (TP + FN)
     """
     y_true = y_true.flatten(1)
     y_pred = y_pred.flatten(1)
-
+    eps = 1e-8
     tp = (y_true * y_pred).sum(dim=-1)
     fn = torch.sum(y_true * (1 - y_pred), dim=-1)
-
     recall = (tp + eps) / (tp + fn + eps)
-    return recall.mean()
+    #'print('tp,fn',(tp < 0).any(),(fn < 0).any())'
+    #print(recall.mean())
+    return recall.sum()
