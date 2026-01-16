@@ -1,5 +1,6 @@
 draft.ipynb
 data
+.env
 .venv
 yolov8n.pt
 train_job
@@ -10,3 +11,4 @@ __pycache__
 */__pycache__/*
 .ipynb_checkpoints
 */*.pt
+*/checkpoints

@@ -1,6 +1,8 @@
 from pitseg.model import UNet3D
 import torch
 import numpy as np
+from monai.transforms import RemoveSmallObjects
+from monai.transforms import FillHoles
 
 ckpt_path = '../pitseg/checkpoint/pitseg_0.1.0.pt'
 def load_model(checkpoint):
@@ -128,6 +130,8 @@ class Segmentor:
         logits = logits.squeeze(1)
         probs = torch.sigmoid(logits)
         pred = torch.where(probs > threshold, 1, 0).int()
+        pred = RemoveSmallObjects(min_size=100)(pred)
+        pred = FillHoles(applied_labels=[1])(pred)
 
         pred = pred.cpu()
         logits = logits.cpu()

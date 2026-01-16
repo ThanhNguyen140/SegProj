@@ -24,23 +24,11 @@ def extract_data(path, debug = False):
 class LoadData(Dataset):
     def __init__(self, imgs, labels, mode="train"):
         self.mode = mode
-        #self.w = window
         # Define MONAI augmentation pipeline
         self.transform = Compose([
             RandFlipd(keys=["image", "label"], spatial_axis=[0], prob=0.3),
             RandRotate90d(keys=['image', 'label'],prob=0.4,spatial_axes=(0, 1)),
-         #   RandGaussianSmoothd(keys=["image"], prob=0.2, sigma_x=(0.5, 1.0)),
-         #   RandShiftIntensityd(keys=["image"], offsets=0.1, prob=0.2),
             EnsureTyped(keys=["image", "label"]),
-         #   Rand3DElasticd(
-         #       keys=["image", "label"],
-         #       sigma_range=(4.0, 6.0),          # smoothing of displacement field (voxels)
-         #       magnitude_range=(0.05, 0.12),    # relative displacement magnitude (small)
-          #      prob=0.3,
-          #      mode=("bilinear", "nearest"),
-           #     padding_mode="border",
-        #    ),
-        ])
         self.get_data(imgs,labels)
 
     def get_data(self, imgs, labels):
